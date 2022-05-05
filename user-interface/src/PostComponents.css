@@ -12,3 +12,9 @@
   background-color: whitesmoke;
   border-radius: 10px;
 }
+
+.PostTitle {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}

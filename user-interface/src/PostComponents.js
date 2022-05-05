@@ -23,7 +23,10 @@ function MyPosts () {
       {myPosts.map(post => {
         return (
           <div key={post.id} className='PostIndividual'>
-            <h5>{post.title}</h5>
+            <header className='PostTitle'>
+              <h5>{post.title}</h5>
+              <h6>Posted on: {post.creation_date.slice(0, post.creation_date.indexOf('T'))}</h6>
+            </header>
             <p>{post.content}</p>
           </div>
         );
