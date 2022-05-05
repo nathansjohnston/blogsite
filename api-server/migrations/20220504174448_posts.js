@@ -9,6 +9,7 @@
     table.foreign('author_id').references('id').inTable('users');
     table.string('title');
     table.string('content');
+    table.date('creation_date', {precision: 3}).defaultTo(knex.fn.now(3));
   });
 };
 
