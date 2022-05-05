@@ -7,6 +7,14 @@ router
     knex.select('*').from('posts')
       .then(data => response.status(200).json(data));
   })
+  .get('/:id', (request, response) => {
+    knex.select('*').from('posts').where('id', '=', request.params.id)
+      .then(data => response.status(200).json(data))
+      .catch(err => {
+        console.log(err);
+        throw err;
+      });
+  })
   .post('/', (request, response) => {
     knex.insert(request.body).into('posts')
       .then(data => response.status(201).send("Blog post successfully created."))
