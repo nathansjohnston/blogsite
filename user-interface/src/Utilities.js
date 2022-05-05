@@ -52,7 +52,10 @@ function Login() {
 };
 
 function Logout() {
+  const userContext = useContext(UserContext);
+
   const onSuccess = () => {
+    userContext.setUser({});
     console.log('You have been logged out.');
   };
 
