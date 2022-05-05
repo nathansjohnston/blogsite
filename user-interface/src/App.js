@@ -18,6 +18,7 @@ function App() {
             <Route path='/' element={<MyPosts />}/>
           </Routes>
         </Router>
+        <Outlet />
       </div>
     </UserContext.Provider>
   );
