@@ -41,7 +41,7 @@ router
         throw err;
       });
   })
-  .get('/:username/posts', (request, response) => {
+  .get('/:id/posts', (request, response) => {
     knex.select('*').from('posts').where('author_id', '=', request.params.id)
       .then(data => response.status(200).json(data))
       .catch(err => {
