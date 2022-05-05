@@ -9,6 +9,33 @@ const API_ADDRESS = 'http://localhost:3001'
 function Login() {
   const userContext = useContext(UserContext);
 
+  const initializeTokenRefresh = (response) => {
+    let refreshInterval = (response.tokenObj.expires_in || 3300) * 1000;
+
+    const refreshToken = async () => {
+      const authorizationResponse = await response.reloadAuthResponse();
+      refreshInterval = (authorizationResponse.tokenObj.expires_in || 3300) * 1000;
+      userContext.setUser(Object.assign(userContext.user, {secret: authorizationResponse.id_token}));
+      await fetch(API_ADDRESS + '/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          username: userContext.username,
+          secret: authorizationResponse.id_token
+        })
+      }).then(reply => {
+        if (reply.status === 201) {
+          console.log('User database record updated.');
+        }
+      });
+      setTimeout(refreshToken, refreshInterval);
+    };
+
+    setTimeout(refreshToken, refreshInterval);
+  }
+
   const onSuccess = async (response) => {
     console.log(`User ${response.profileObj.email} logged on.`);
     initializeTokenRefresh(response);
@@ -67,18 +94,5 @@ function Logout() {
     />
   );
 };
-
-function initializeTokenRefresh(response) {
-  let refreshInterval = (response.tokenObj.expires_in || 3300) * 1000;
-
-  const refreshToken = async () => {
-    const authorizationResponse = await response.reloadAuthResponse();
-    refreshInterval = (authorizationResponse.tokenObj.expires_in || 3300) * 1000;
-    console.log(authorizationResponse.id_token);
-    setTimeout(refreshToken, refreshInterval);
-  };
-
-  setTimeout(refreshToken, refreshInterval);
-}
 
 export { Login, Logout };
