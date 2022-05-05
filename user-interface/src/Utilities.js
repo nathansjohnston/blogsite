@@ -1,13 +1,38 @@
 // GAPI programming/rationale derived from https://dev.to/sivaneshs/add-google-login-to-your-react-apps-in-10-mins-4del
 import { GoogleLogin, GoogleLogout } from 'react-google-login';
+import { useContext } from 'react';
+import { UserContext } from './App';
 
 const GAPI_CLIENT_ID = "313590509283-1poq1lkeqt0aj7ctg4ibje7tiislbdn0.apps.googleusercontent.com";
+const API_ADDRESS = 'http://localhost:3001'
 
 function Login() {
-  const onSuccess = (response) => {
-    console.log('Login Successful', response.profileObj);
-    console.log('User\'s Token:', response.tokenObj);
+  const userContext = useContext(UserContext);
+
+  const onSuccess = async (response) => {
+    console.log(`User ${response.profileObj.email} logged on.`);
     initializeTokenRefresh(response);
+    await fetch(API_ADDRESS + '/users', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        first_name: response.profileObj.givenName,
+        last_name: response.profileObj.familyName,
+        username: response.profileObj.email,
+        secret: response.tokenObj.id_token
+      })
+    }).then(reply => {
+      if (reply.status === 201) {
+        console.log('User database record updated.');
+      }
+    });
+    await fetch(API_ADDRESS + `/users/?username=${response.profileObj.email}&token=${response.tokenObj.id_token}`)
+    .then(response => response.json())
+    .then(data => {
+      userContext.setUser(data);
+    })
   };
 
   const onFailure = (response) => {
