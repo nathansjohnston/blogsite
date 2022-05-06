@@ -1,5 +1,6 @@
 import './PostComponents.css';
 import { useContext, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import { UserContext } from './App';
 
@@ -78,8 +79,20 @@ function AllPosts () {
 };
 
 function Post () {
+  const navigateTo = useNavigate();
   const postContext = useContext(UserContext);
   const [currentPost, setCurrentPost] = useState({});
+
+  const deletePost = async () => {
+    await fetch(API_ADDRESS + `/posts/${currentPost.id}`, {
+      method: 'DELETE'
+    }).then(reply => {
+      if (reply.status === 200) {
+        console.log('Post deleted.');
+      };
+    });
+    navigateTo('/profile');
+  }
 
   useEffect(() => {
     fetch(API_ADDRESS + `/posts/${postContext.post}`)
@@ -96,6 +109,7 @@ function Post () {
             <h6>Posted on: {currentPost.creation_date.slice(0, currentPost.creation_date.indexOf('T'))}</h6>
           </header>
           <p>{currentPost.content}</p>
+          <button onClick={deletePost} >Delete Post</button>
         </div>
       </div>
     );
