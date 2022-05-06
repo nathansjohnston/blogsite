@@ -29,6 +29,7 @@ function MyPosts () {
 
   return (
     <div className='PostContainer'>
+      <h2>My Posts</h2>
       {myPosts.map(post => {
         return (
           <div key={post.id} className='PostIndividual'>
@@ -59,6 +60,7 @@ function AllPosts () {
 
   return (
     <div className='PostContainer'>
+      <h2>All Posts</h2>
       {posts.map(post => {
         return (
           <div key={post.id} className='PostIndividual'>
@@ -119,4 +121,49 @@ function Post () {
   }
 }
 
-export { MyPosts, AllPosts, Post };
+function PostCreator () {
+  const context = useContext(UserContext);
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
+
+  const handleTitleUpdate = event => {
+    setTitle(event.target.value);
+  };
+
+  const handleContentUpdate = event => {
+    setContent(event.target.value);
+  };
+
+  const handleSubmit = async (event) => {
+    await fetch(API_ADDRESS + '/posts', {
+      method: 'POST',
+      headers: {
+        'Content-Type':'application/json'
+      },
+      body: JSON.stringify({
+        'author_id': context.user.id,
+        'title': title,
+        'content': content
+      })
+    }).then(reply => console.log(reply));
+    event.preventDefault();
+  }
+
+  return (
+    <div className='PostCreator'>
+      <form onSubmit={handleSubmit}>
+        <label className='PostCreatorLabel'>
+          Title:
+          <input type='text' value={title} onChange={handleTitleUpdate} className='PostCreatorField'/>
+        </label>
+        <label className='PostCreatorLabel'>
+          Content:
+          <textarea type='text' value={content} onChange={handleContentUpdate} className='PostCreatorField'/>
+        </label>
+        <input type='submit' value='Create Post!' className='PostCreatorSubmit'/>
+      </form>
+    </div>
+  );
+}
+
+export { MyPosts, AllPosts, Post, PostCreator };
