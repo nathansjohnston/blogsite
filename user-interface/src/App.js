@@ -12,11 +12,11 @@ function App() {
   return (
     <UserContext.Provider value={{user, setUser}}>
       <div className="App">
-        <NavBar />
         <Router>
+          <NavBar />
           <Routes>
-            <Route path='/' element={<MyPosts />} />
-            <Route path='/all' element={<AllPosts />} />
+            <Route path='/profile' element={<MyPosts />} />
+            <Route path='/' element={<AllPosts />} />
           </Routes>
         </Router>
         <Outlet />
