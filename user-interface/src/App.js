@@ -2,7 +2,7 @@ import './App.css';
 import { createContext, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Outlet } from 'react-router-dom';
 import NavBar from './NavBar';
-import { MyPosts, AllPosts, Post } from './PostComponents';
+import { MyPosts, AllPosts, Post, PostCreator } from './PostComponents';
 
 const UserContext = createContext();
 
@@ -19,6 +19,7 @@ function App() {
             <Route path='/profile' element={<MyPosts />} />
             <Route path='/' element={<AllPosts />} />
             <Route path='/post/:id' element={<Post />} />
+            <Route path='/create' element={<PostCreator />} />
           </Routes>
         </Router>
         <Outlet />
