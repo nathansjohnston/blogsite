@@ -1,6 +1,7 @@
 // GAPI programming/rationale derived from https://dev.to/sivaneshs/add-google-login-to-your-react-apps-in-10-mins-4del
 import { GoogleLogin, GoogleLogout } from 'react-google-login';
 import { useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { UserContext } from './App';
 
 const GAPI_CLIENT_ID = "313590509283-1poq1lkeqt0aj7ctg4ibje7tiislbdn0.apps.googleusercontent.com";
@@ -8,6 +9,7 @@ const API_ADDRESS = 'http://localhost:3001'
 
 function Login() {
   const userContext = useContext(UserContext);
+  const navigateTo = useNavigate();
 
   const initializeTokenRefresh = (response) => {
     let refreshInterval = (response.tokenObj.expires_in || 3300) * 1000;
@@ -60,6 +62,7 @@ function Login() {
     .then(data => {
       userContext.setUser(data);
     })
+    navigateTo('/profile');
   };
 
   const onFailure = (response) => {
@@ -80,10 +83,12 @@ function Login() {
 
 function Logout() {
   const userContext = useContext(UserContext);
+  const navigateTo = useNavigate();
 
   const onSuccess = () => {
     userContext.setUser({});
     console.log('You have been logged out.');
+    navigateTo('/');
   };
 
   return (
