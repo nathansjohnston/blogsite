@@ -83,6 +83,35 @@ function Post () {
   const navigateTo = useNavigate();
   const postContext = useContext(UserContext);
   const [currentPost, setCurrentPost] = useState({});
+  const [editing, setEditing] = useState(false);
+  const [editTitle, setEditTitle] = useState('');
+  const [editContent, setEditContent] = useState('');
+
+  const handleTitleEdit = (event) => {
+    setEditTitle(event.target.value);
+  };
+
+  const handleContentEdit = (event) => {
+    setEditContent(event.target.value);
+  }
+
+  const handleSubmit = async (event) => {
+    await fetch(API_ADDRESS + `/posts/${currentPost.id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        'title': editTitle,
+        'content': editContent
+      })
+    }).then(reply => console.log(reply));
+    await fetch(API_ADDRESS + `/posts/${postContext.post}`)
+      .then(reply => reply.json())
+      .then(post => setCurrentPost(post));
+    event.preventDefault();
+    setEditing(false);
+  }
 
   const deletePost = async () => {
     await fetch(API_ADDRESS + `/posts/${currentPost.id}`, {
@@ -101,7 +130,19 @@ function Post () {
     .then(data => setCurrentPost(data));
   }, [postContext.post])
 
-  if (currentPost.title) {
+  if (editing) {
+    return (
+      <div className='PostContainer'>
+        <div key={currentPost.id} className='PostIndividual'>
+          <form onSubmit={handleSubmit}>
+            <input type='text' value={editTitle} className='PostCreatorField' onChange={handleTitleEdit}/>
+            <textarea type='text' value={editContent} className='PostCreatorField' onChange={handleContentEdit}/>
+            <input type='submit' value='Edit!' className='PostCreatorSubmit'/>
+          </form>
+        </div>
+      </div>
+    );
+  } else if (currentPost.title) {
     return (
       <div className='PostContainer'>
         <div key={currentPost.id} className='PostIndividual'>
@@ -110,7 +151,15 @@ function Post () {
             <h6>Posted on: {currentPost.creation_date.slice(0, currentPost.creation_date.indexOf('T'))}</h6>
           </header>
           <p>{currentPost.content}</p>
-          { (postContext.user.username && postContext.user.id === currentPost.author_id) ? <button onClick={deletePost} >Delete Post</button> : <></>}
+          { (postContext.user.username && postContext.user.id === currentPost.author_id) ?
+          <>
+            <button onClick={deletePost} className='PostCreatorSubmit'>Delete Post</button>
+            <button onClick={() => {
+              setEditing(true);
+              setEditTitle(currentPost.title);
+              setEditContent(currentPost.content);
+            }} className='PostCreatorSubmit'>Edit Post</button>
+          </> : <></>}
         </div>
       </div>
     );
