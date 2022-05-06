@@ -9,7 +9,7 @@ router
   })
   .get('/:id', (request, response) => {
     knex.select('*').from('posts').where('id', '=', request.params.id)
-      .then(data => response.status(200).json(data))
+      .then(data => response.status(200).json(data[0]))
       .catch(err => {
         console.log(err);
         throw err;
