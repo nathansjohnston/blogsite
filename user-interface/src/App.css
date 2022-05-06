@@ -1,6 +1,7 @@
-/* .App {
-  text-align: center;
-} */
+.App {
+  background-color: burlywood;
+  min-height: 100vh;
+}
 
 .App-header {
   background-color: #282c34;
