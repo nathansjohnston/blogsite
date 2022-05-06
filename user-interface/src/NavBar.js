@@ -17,6 +17,9 @@ function NavBar () {
         <button className='NavButton' onClick={() => {
           navigateTo('/profile');
         }}>My Posts</button>
+        <button className='NavButton' onClick={() => {
+          navigateTo('/create');
+        }}>Create Post</button>
         <div className='NavLinks'>
           <Logout />
         </div>
