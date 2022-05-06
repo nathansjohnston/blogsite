@@ -1,7 +1,6 @@
 import './PostComponents.css';
 import { useContext, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { UserContext } from './App';
 
 const API_ADDRESS = 'http://localhost:3001';
@@ -109,7 +108,7 @@ function Post () {
             <h6>Posted on: {currentPost.creation_date.slice(0, currentPost.creation_date.indexOf('T'))}</h6>
           </header>
           <p>{currentPost.content}</p>
-          <button onClick={deletePost} >Delete Post</button>
+          { (postContext.user.username && postContext.user.id === currentPost.author_id) ? <button onClick={deletePost} >Delete Post</button> : <></>}
         </div>
       </div>
     );
