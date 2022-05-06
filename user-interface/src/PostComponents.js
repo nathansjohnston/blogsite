@@ -1,5 +1,6 @@
 import './PostComponents.css';
 import { useContext, useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { UserContext } from './App';
 
 const API_ADDRESS = 'http://localhost:3001';
@@ -36,6 +37,9 @@ function MyPosts () {
               <h6>Posted on: {post.creation_date.slice(0, post.creation_date.indexOf('T'))}</h6>
             </header>
             <p>{postContentHandler(post.content)}</p>
+            <Link to={`/post/${post.id}`} onClick={() => {
+              userContext.setPost(post.id);
+            }}>Full Post</Link>
           </div>
         );
       })}
@@ -45,6 +49,7 @@ function MyPosts () {
 
 function AllPosts () {
   const [posts, setPosts] = useState([]);
+  const userContext = useContext(UserContext);
 
   useEffect(() => {
     fetch(API_ADDRESS + `/posts`)
@@ -62,6 +67,9 @@ function AllPosts () {
               <h6>Posted on: {post.creation_date.slice(0, post.creation_date.indexOf('T'))}</h6>
             </header>
             <p>{postContentHandler(post.content)}</p>
+            <Link to={`/post/${post.id}`} onClick={() => {
+              userContext.setPost(post.id);
+            }}>Full Post</Link>
           </div>
         );
       })}
@@ -69,4 +77,33 @@ function AllPosts () {
   );
 };
 
-export { MyPosts, AllPosts };
+function Post () {
+  const postContext = useContext(UserContext);
+  const [currentPost, setCurrentPost] = useState({});
+
+  useEffect(() => {
+    fetch(API_ADDRESS + `/posts/${postContext.post}`)
+    .then(reply => reply.json())
+    .then(data => setCurrentPost(data));
+  }, [postContext.post])
+
+  if (currentPost.title) {
+    return (
+      <div className='PostContainer'>
+        <div key={currentPost.id} className='PostIndividual'>
+          <header className='PostTitle'>
+            <h5>{currentPost.title}</h5>
+            <h6>Posted on: {currentPost.creation_date.slice(0, currentPost.creation_date.indexOf('T'))}</h6>
+          </header>
+          <p>{currentPost.content}</p>
+        </div>
+      </div>
+    );
+  } else {
+    return (
+      <p>Loading...</p>
+    );
+  }
+}
+
+export { MyPosts, AllPosts, Post };
